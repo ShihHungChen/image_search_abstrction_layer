@@ -4,7 +4,7 @@ const app = express();
 const searchSchema = require('./recentSearchTable');
 const mongoose = require('mongoose');
 const GoogleImages = require('google-images');
-const client = new GoogleImages('009088407188627415974:iymdhlgs73k', 'AIzaSyD3XOwKlRu4Mc4PJjXZQb5wIih_PMfI8jA');
+const client = new GoogleImages('','');
 
 mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost/imagesearchabstactionlayer/data');
