@@ -1,8 +1,10 @@
 const express = require('express');
-const searchSchema = require('./recentSearchTable')
 const url = require('url');
 const app = express();
+const searchSchema = require('./recentSearchTable');
 const mongoose = require('mongoose');
+const GoogleImages = require('google-images');
+const client = new GoogleImages('009088407188627415974:iymdhlgs73k', 'AIzaSyD3XOwKlRu4Mc4PJjXZQb5wIih_PMfI8jA');
 
 mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost/imagesearchabstactionlayer/data');
@@ -30,16 +32,22 @@ app.get('/api/imagesearch/:SearchValue', function (req, res){
 
 app.get('/api/latest/imagesearch', function(req, res){
   
-  searchSchema.find().where('recent_search').exec(function(err, data){
+  // open writeHead will cause an error :　"Error: Can't set headers after they are sent."
+  // but i can figure out the reason!
+  //res.writeHead(200, {'Content-Type' : 'application/json'});
+  searchSchema.find({}, function(err, docs){
     if(err){
-      console.error('There was an error: ', err);
+      res.send(err);
     }
     else{
-      console.log(data);
+      var queryData = new Array();
+      for(var i in docs){
+        queryData.push({'Term' : docs[i].searchValue, 'when': docs[i].searchDate});
+      }
+      res.json(queryData);
     }
   });
   
-  res.end();
 })
 
 app.listen(8080, function () {
