@@ -14,6 +14,21 @@ mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost/imagesearchabstactionlayer/data');
 
 // express get functions
+app.get('/', function(req, res){
+  res.writeHead(200,{'Content-Type' : 'text/plain'});
+  res.end('It\'s Image Search Abstraction Layer api \n\
+  User Story:\n\
+  \n\
+      1. I can get the image URLs, alt text and page urls for a set of images relating to a given search string.\n\
+      2. I can paginate through the responses by adding a ?offset=2 parameter to the URL.\n\
+      3. I can get a list of the most recently submitted search strings.\n\
+  \n\
+  Example:\n\
+      1. https://image-search-abstraction-layer-shihung.c9users.io/api/imagesearch/cute cats\n\
+      2. https://image-search-abstraction-layer-shihung.c9users.io/api/imagesearch/cute cats?offset=5\n\
+      3. https://image-search-abstraction-layer-shihung.c9users.io/api/latest/imagesearch');
+})
+
 app.get('/api/imagesearch/:SearchValue', function (req, res){
   var search_value = req.params.SearchValue;
   var offset_value = req.query.offset;
