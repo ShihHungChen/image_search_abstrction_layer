@@ -5,7 +5,10 @@ const app = express();
 const searchSchema = require('./recentSearchTable');
 const mongoose = require('mongoose');
 const GoogleImages = require('google-images');
-const client = new GoogleImages('','');
+
+var fs = require('fs');
+var key_data = JSON.parse(fs.readFileSync('./key_data.json', 'utf8'));
+const client = new GoogleImages(key_data.CSE_ID,key_data.API_KEY);
 
 mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost/imagesearchabstactionlayer/data');
@@ -33,7 +36,7 @@ app.get('/api/imagesearch/:SearchValue', function (req, res){
   // process offset
   var searnSiglePage = true;
   if(offset_value){
-    var isSearnSiglePage = (offset_value % 10) === 0;
+    searnSiglePage = (offset_value % 10) === 0;
   }
   
   // do image search
@@ -107,12 +110,17 @@ app.get('/api/latest/imagesearch', function(req, res){
     else{
       var queryData = new Array();
       for(var i in docs){
-        queryData.push({'Term' : docs[i].searchValue, 'when': docs[i].searchDate});
+        queryData.unshift({'Term' : docs[i].searchValue, 'when': docs[i].searchDate});
       }
       res.json(queryData);
     }
   });
   
+})
+
+app.get('*', function(req, res){
+  res.writeHead(404,{'Content-Type' : 'text/plain'});
+  res.end('404 error! it\'s not supported operation');
 })
 
 app.listen(8080, function () {
